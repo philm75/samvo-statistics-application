@@ -1,1 +1,0 @@
-# samvo-statistics-application
