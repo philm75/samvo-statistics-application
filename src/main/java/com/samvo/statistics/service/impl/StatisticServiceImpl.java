@@ -83,9 +83,9 @@ public class StatisticServiceImpl implements StatisticsService {
 	}
 
 	@Override
-	public void updateKo(Integer matchId, Double homePrice, Double drawPrice, Double awayPrice, Double htUndefHgPrice, Integer feedTypeId, Integer indicator, Integer bookieId) {
-		if (LOGGER.isDebugEnabled()) {LOGGER.debug(String.format("updateKo(matchId=%s,feedTypeId=%s,indicator=%s", matchId.toString(), feedTypeId.toString(), String.valueOf(indicator), String.valueOf(bookieId)));}
-		matchDao.updateKo(matchId, homePrice, drawPrice, awayPrice, htUndefHgPrice, feedTypeId, indicator, bookieId);
+	public void updateKo(Integer matchId, Double homePrice, Double drawPrice, Double awayPrice, Double htUndefHgPrice, Integer feedTypeId, Integer bookieId) {
+		if (LOGGER.isDebugEnabled()) {LOGGER.debug(String.format("updateKo(matchId=%s,feedTypeId=%s,indicator=%s", matchId.toString(), feedTypeId.toString(), String.valueOf(bookieId)));}
+		matchDao.updateKo(matchId, homePrice, drawPrice, awayPrice, htUndefHgPrice, feedTypeId, bookieId);
 	}
 
 	@Transactional(readOnly=true)
@@ -125,5 +125,11 @@ public class StatisticServiceImpl implements StatisticsService {
 	@Override
 	public void interruptInRunningMarket() {
 		irStatisticsGenerator.stopProcess();
+	}
+
+	@Override
+	public void updateInRunningIndicator(Integer matchId, Integer feedTypeId, Integer indicator, Integer bookieId) {
+		if (LOGGER.isDebugEnabled()) {LOGGER.debug(String.format("updateInRunningIndicator(matchId=%s,feedTypeId=%s,indicator=%s,bookieId=%s)", String.valueOf(matchId), String.valueOf(feedTypeId), String.valueOf(indicator), String.valueOf(bookieId)));}
+		matchDao.updateInRunningIndicator(matchId, feedTypeId, indicator, bookieId);
 	}
 }

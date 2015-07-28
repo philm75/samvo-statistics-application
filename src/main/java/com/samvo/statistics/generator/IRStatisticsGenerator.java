@@ -86,71 +86,74 @@ public class IRStatisticsGenerator extends StatisticsGenerator {
 			for (Map.Entry<String, Match> entry : matches.entrySet()) {				
 				  if (matchCache.containsKey(entry.getKey())) {
 					  match = matchCache.get(entry.getKey());
-				  } else {
+				  
 					  /**
-					   * Create match doesn't exist, create it.
+					   * If the match is running, update the indicator. 
 					   */
-					  statisticsService.createMatch(entry.getValue());	 
+					  if (entry.getValue().getRunningIndicator().intValue() == IN_RUNNING_INDICATOR && match.getRunningIndicator().intValue() == NOT_RUNNING_INDICATOR) {
+						  if (LOGGER.isInfoEnabled()) {LOGGER.info("Update Match running indicator - " + entry.getKey());}
 					  
-					  /**
-					   * Add to cache.
-					   */
-					  matchCache.put(entry.getKey(), entry.getValue());
-					  match = matchCache.get(entry.getKey());
-				  }
-				  if (LOGGER.isInfoEnabled()) {LOGGER.info("Processing Match =" + match.toString());}
-				  
-				  /**
-				   * If the match is running, update the indicator. 
-				   */
-				  if (entry.getValue().getRunningIndicator().intValue() == IN_RUNNING_INDICATOR && match.getRunningIndicator().intValue() == NOT_RUNNING_INDICATOR) {
-					  if (LOGGER.isInfoEnabled()) {LOGGER.info("Update Match KO prices for match key - " + entry.getKey());}					
-					  statisticsService.updateKo(entry.getValue().getMatchId(), 
-							  					 entry.getValue().getKoHomePrice(), 
-							  					 entry.getValue().getKoDrawPrice(), 
-							  					 entry.getValue().getKoAwayPrice(), 
-							  					 entry.getValue().getKoOuHfPrice(), 
-							  					 feedTypeId, 
-							  					 IN_RUNNING_INDICATOR,
-							  					 entry.getValue().getBookieId());
-				  }
-				  
-				  Integer timeInGame = timeGameLiveMinute(entry.getValue().getTimeGameLive());
-				  
-				  /**
-				   * If a goal has been scored, record the time.
-				   */
-				  if (entry.getValue().getAwayScore().intValue() > 0 || entry.getValue().getHomeScore().intValue() > 0) {					  
-					  if (match.getTimeFirstGoal().intValue() == -1) {
-						  if (LOGGER.isInfoEnabled()) {LOGGER.info("Goal scored in match " + entry.getKey());}
-						  statisticsService.updateFirstGoalScore(entry.getValue().getMatchId(), 
-								  								 timeInGame, 
-								  								 feedTypeId, 
-								  								 entry.getValue().getBookieId());
+						  /**
+						   * Set in-running indicator.
+						   */
+						  statisticsService.updateInRunningIndicator(entry.getValue().getMatchId(), 
+								  									 feedTypeId, 
+								  									 IN_RUNNING_INDICATOR, 
+								  									 entry.getValue().getBookieId());
+					  
+						  /**
+						   * If the match in the DB has no KO prices then update.
+						   */
+						  if (match.getKoOuHfPrice() == null && entry.getValue().getKoOuHfPrice() != null) {
+							  if (LOGGER.isInfoEnabled()) {LOGGER.info("Update Match KO prices for match key - " + entry.getKey());}
+							  
+							  statisticsService.updateKo(entry.getValue().getMatchId(), 
+									  					 entry.getValue().getKoHomePrice(), 
+									  					 entry.getValue().getKoDrawPrice(), 
+									  					 entry.getValue().getKoAwayPrice(), 
+									  					 entry.getValue().getKoOuHfPrice(), 
+									  					 feedTypeId, 
+									  					 entry.getValue().getBookieId());						  
+						  }
 					  }
-				  } else {
+				  
+					  Integer timeInGame = timeGameLiveMinute(entry.getValue().getTimeGameLive());
+				  
 					  /**
-					   * No goal score set, Under 0.5 HT price
-					   */					  
-					  if (timeInGame < 56 && entry.getValue().getKoOuHfPrice() != null) {
-						  if (LOGGER.isInfoEnabled()) {						    
+					   * If a goal has been scored, record the time.
+					   */
+					  if (entry.getValue().getAwayScore().intValue() > 0 || entry.getValue().getHomeScore().intValue() > 0) {					  
+						  if (match.getTimeFirstGoal().intValue() == -1) {
+							  if (LOGGER.isInfoEnabled()) {LOGGER.info("Goal scored in match " + entry.getKey());}
+							  statisticsService.updateFirstGoalScore(entry.getValue().getMatchId(), 
+									  								 timeInGame, 
+									  								 feedTypeId, 
+									  								 entry.getValue().getBookieId());
+						  }
+					  } else {
+						  /**
+						   * No goal score set, Under 0.5 HT price
+						   */					  
+						  if (timeInGame < 56 && entry.getValue().getKoOuHfPrice() != null) {
+							  if (LOGGER.isInfoEnabled()) {						    
 							  	LOGGER.info(String.format("Update minute for match ID=%s,bookieId=%s,feedTypeId=%s,timeInGame=%s,price=%s", 
 							  																String.valueOf(entry.getValue().getMatchId()), 
 																						    String.valueOf(entry.getValue().getBookieId()),
 																						    String.valueOf(entry.getValue().getFeedTypeId()),
 																						    String.valueOf(timeInGame),
 																						    String.valueOf(entry.getValue().getKoOuHfPrice())));
+							  }
+						  
+							  statisticsService.updateMatchMinute(entry.getValue().getMatchId(), 
+									  							  entry.getValue().getBookieId(), 		
+									  							  entry.getValue().getFeedTypeId(),
+									  							  timeInGame, 	
+									  							  entry.getValue().getKoOuHfPrice());
+						  
 						  }
-						  
-						  statisticsService.updateMatchMinute(entry.getValue().getMatchId(), 
-								  							  entry.getValue().getBookieId(), 		
-								  							  entry.getValue().getFeedTypeId(),
-								  							  timeInGame, 	
-								  							  entry.getValue().getKoOuHfPrice());
-						  
-					  }
-				  }		  
-			}			
+					  }		  			
+				  }
+			}
 		}
 	}
 	
