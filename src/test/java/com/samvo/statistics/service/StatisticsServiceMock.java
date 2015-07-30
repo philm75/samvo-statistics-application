@@ -123,7 +123,7 @@ public class StatisticsServiceMock implements StatisticsService {
 	}
 
 	@Override
-	public void updateKo(Integer matchId, Double homePrice, Double drawPrice, Double awayPrice, Double htUndefHgPrice, Integer feedTypeId, Integer indicator, Integer bookieId) {	
+	public void updateKo(Integer matchId, Double homePrice, Double drawPrice, Double awayPrice, Double htUndefHgPrice, Integer feedTypeId, Integer bookieId) {	
 	}
 
 	@Override
@@ -142,5 +142,9 @@ public class StatisticsServiceMock implements StatisticsService {
 
 	@Override
 	public void interruptInRunningMarket() {		
+	}
+
+	@Override
+	public void updateInRunningIndicator(Integer matchId, Integer feedTypeId, Integer indicator, Integer bookieId) {		
 	}
 }

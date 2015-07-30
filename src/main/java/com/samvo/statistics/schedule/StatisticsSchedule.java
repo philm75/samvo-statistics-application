@@ -63,6 +63,7 @@ public class StatisticsSchedule {
 	 * Run the today market statistics generator process.
 	 */
 	//@Scheduled(cron="0 05 17 * * *")
+	//@Scheduled(cron="*/60 * * * * *")
 	public void createTodayStats() {
 		LOGGER.info("TM Process started....");
 		try {

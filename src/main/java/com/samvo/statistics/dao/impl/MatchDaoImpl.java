@@ -50,9 +50,28 @@ public class MatchDaoImpl implements MatchDao {
 	/**
 	 * Check if match exists.
 	 */
-	private static final String READ_EXISTS_SQL = "SELECT MATCH_ID " +
-									   		      "FROM   OPSFEED.MATCH " +
-			                                      "WHERE  MATCH_ID = :matchId " +
+	private static final String READ_EXISTS_SQL = "SELECT MATCH_ID 					 " +
+												  " LEAGUE_NAME, 					 " +
+												  " HOME_TEAM_NAME, 				 " +
+												  " AWAY_TEAM_NAME, 				 " +
+												  " MATCH_TIME, 					 " +
+												  " RUNNING_INDICATOR, 				 " +
+												  " HOME_SCORE, 					 " +
+												  " AWAY_SCORE, 					 " +
+												  " TIME_GAME_LIVE, 				 " +
+												  " LEAGUE_ID, 						 " +
+												  " HOME_TEAM_ID, 					 " +
+												  " AWAY_TEAM_ID, 					 " +
+												  " FEED_TYPE_ID, 					 " +
+												  " TIME_FIRST_GOAL, 				 " +		
+												  " KICK_OFF_HOME_PRICE, 			 " +
+												  " KICK_OFF_AWAY_PRICE, 			 " +
+												  " KICK_OFF_DRAW_PRICE, 			 " +
+												  " KICK_OFF_OU_HF_PRICE,			 " +
+												  " MATCH_DATE, 					 " +
+												  " BOOKIE_ID 						 " +	 
+									   		      "FROM   OPSFEED.MATCH              " +
+			                                      "WHERE  MATCH_ID = :matchId        " +
 											      "AND    FEED_TYPE_ID = :feedTypeId " +
 			                                      "AND    BOOKIE_ID = :bookieId";
 	
@@ -255,7 +274,8 @@ public class MatchDaoImpl implements MatchDao {
 	public void createMatch(Match match) {
 		if (LOGGER.isDebugEnabled()) {LOGGER.debug(String.format("createMatch(match=%s)", match.toString()));}
 		
-		if (!exists(match)) {
+		Match dbMatch = exists(match);		
+		if (dbMatch == null) {
 			try {
 				/**
 				 * Create match.
@@ -294,15 +314,29 @@ public class MatchDaoImpl implements MatchDao {
 			/**
 			 * Update KO prices.
 			 */
-			updateKo(match.getMatchId(), 
-					 match.getKoHomePrice(), 
-					 match.getKoDrawPrice(), 
-					 match.getKoAwayPrice(), 
-					 match.getKoOuHfPrice(), 
-					 match.getFeedTypeId(), 
-					 match.getBookieId());
+			if (match.getKoAwayPrice() != null ||
+				match.getKoHomePrice() != null ||
+				match.getKoDrawPrice() != null ||
+				match.getKoOuHfPrice() != null) {
 			
-			LOGGER.info("Match exists already matchId=" + String.valueOf(match.getMatchId()) + ",bookieId=" + String.valueOf(match.getBookieId()) + ",feedType=" + String.valueOf(match.getFeedTypeId()));
+				LOGGER.info("Match exists already, updating prices " +
+				            "matchId=" + String.valueOf(match.getMatchId()) + 
+						    ",bookieId=" + String.valueOf(match.getBookieId()) + 
+						    ",feedType=" + String.valueOf(match.getFeedTypeId()) +
+						    " KO Home Price=" + String.valueOf(match.getKoHomePrice()) +
+						    ",KO Draw Price=" + String.valueOf(match.getKoDrawPrice()) + 
+						    ",KO Away Price=" + String.valueOf(match.getKoAwayPrice()) +
+						    ",KO HF Price  =" + String.valueOf(match.getKoOuHfPrice()));
+							
+				updateKo(match.getMatchId(), 
+						 match.getKoHomePrice(), 
+						 match.getKoDrawPrice(), 
+						 match.getKoAwayPrice(), 
+						 match.getKoOuHfPrice(), 
+						 match.getFeedTypeId(), 
+						 match.getBookieId());				
+			}
+			
 		}
 		
 	}
@@ -388,18 +422,17 @@ public class MatchDaoImpl implements MatchDao {
 		jdbcTemplate.update(UPDATE_INDICATOR_SQL, paramMap);
 	}	
 
-    private boolean exists(Match match) {
+    private Match exists(Match match) {
     	try {
         	Map<String, Object> paramMap = new HashMap<String, Object>();
         	paramMap.put("matchId"   , match.getMatchId());
         	paramMap.put("bookieId"  , match.getBookieId());
         	paramMap.put("feedTypeId", match.getFeedTypeId());
-        	Integer matchId = jdbcTemplate.queryForObject(READ_EXISTS_SQL, paramMap, Integer.class);
-        	return (matchId != null);    		
+        	return jdbcTemplate.queryForObject(READ_EXISTS_SQL, paramMap, matchRowMapper);  		
     	} catch (EmptyResultDataAccessException e) {
-    		return false;
+    		return null;
     	}
-    }
+    }	
     
 	private class MatchRowMapper implements RowMapper<Match> {
 
