@@ -50,7 +50,7 @@ public class MatchDaoImpl implements MatchDao {
 	/**
 	 * Check if match exists.
 	 */
-	private static final String READ_EXISTS_SQL = "SELECT MATCH_ID 					 " +
+	private static final String READ_EXISTS_SQL = "SELECT MATCH_ID,					 " +
 												  " LEAGUE_NAME, 					 " +
 												  " HOME_TEAM_NAME, 				 " +
 												  " AWAY_TEAM_NAME, 				 " +

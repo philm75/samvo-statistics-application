@@ -32,11 +32,10 @@ public class MatchTimeDaoTest extends BaseDaoTest {
 		
 		List<MatchTime> matchMinutes = matchTimeDao.readMatchTimeByMatchId(matchId, feedTypeId);
 		assertFalse(matchMinutes.isEmpty());
-		assertEquals(matchMinutes.size(), 90);
 		
 		Iterator<MatchTime> iterator = matchMinutes.iterator();
 		MatchTime matchTime = null;
-		int minuteCounter = 0;
+		int minuteCounter = 1;
 		while (iterator.hasNext()) {
 			matchTime = iterator.next();
 			assertEquals(matchTime.getBookieId(), bookieId);

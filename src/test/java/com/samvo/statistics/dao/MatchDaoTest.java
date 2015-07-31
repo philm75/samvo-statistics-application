@@ -112,56 +112,7 @@ public class MatchDaoTest extends BaseDaoTest {
 		matches.add(match1);
 		matches.add(match2);
 		
-		matchDao.createMatches(matches);
-		
-		List<Match> results = matchDao.readAll();
-		assertFalse(results.isEmpty());
-		assert(results.size() == 2);
-		
-		Match result = matches.get(0);
-		assertEquals(result.getAwayScore().intValue(), match1.getAwayScore().intValue());
-		assertEquals(result.getAwayTeamId().intValue(), match1.getAwayTeamId().intValue());
-		assertEquals(result.getAwayTeamName(), match1.getAwayTeamName());
-		assertEquals(result.getFeedTypeId(), match1.getFeedTypeId());
-		assertEquals(result.getHomeScore(), match1.getHomeScore());
-		assertEquals(result.getHomeTeamId(), match1.getHomeTeamId());
-		assertEquals(result.getHomeTeamName(), match1.getHomeTeamName());
-		assertEquals(result.getLeagueId(), match1.getLeagueId());
-		assertEquals(result.getLeagueName(), match1.getLeagueName());
-		assertEquals(result.getMatchId(), match1.getMatchId());
-		assertEquals(result.getMatchTime(), match1.getMatchTime());
-		assertEquals(result.getRunningIndicator(), match1.getRunningIndicator());
-		assertEquals(result.getTimeFirstGoal(), match1.getTimeFirstGoal());
-		assertEquals(result.getTimeGameLive(), match1.getTimeGameLive());
-		assert(result.getKoAwayPrice() == match1.getKoAwayPrice());
-		assert(result.getKoDrawPrice() == match1.getKoDrawPrice());
-		assert(result.getKoHomePrice() == match1.getKoHomePrice());
-		assert(result.getKoOuHfPrice() == match1.getKoOuHfPrice());
-		assertEquals(result.getTimeGameLive(), match1.getTimeGameLive());
-		
-		result = matches.get(1);
-		assertEquals(result.getAwayScore().intValue(), match2.getAwayScore().intValue());
-		assertEquals(result.getAwayTeamId().intValue(), match2.getAwayTeamId().intValue());
-		assertEquals(result.getAwayTeamName(), match2.getAwayTeamName());
-		assertEquals(result.getFeedTypeId(), match2.getFeedTypeId());
-		assertEquals(result.getHomeScore(), match2.getHomeScore());
-		assertEquals(result.getHomeTeamId(), match2.getHomeTeamId());
-		assertEquals(result.getHomeTeamName(), match2.getHomeTeamName());
-		assertEquals(result.getLeagueId(), match2.getLeagueId());
-		assertEquals(result.getLeagueName(), match2.getLeagueName());
-		assertEquals(result.getMatchId(), match2.getMatchId());
-		assertEquals(result.getMatchTime(), match2.getMatchTime());
-		assertEquals(result.getRunningIndicator(), match2.getRunningIndicator());
-		assertEquals(result.getTimeFirstGoal(), match2.getTimeFirstGoal());
-		assertEquals(result.getTimeGameLive(), match2.getTimeGameLive());
-		assert(result.getKoAwayPrice() == match2.getKoAwayPrice());
-		assert(result.getKoDrawPrice() == match2.getKoDrawPrice());
-		assert(result.getKoHomePrice() == match2.getKoHomePrice());
-		assert(result.getKoOuHfPrice() == match2.getKoOuHfPrice());
-		assertEquals(result.getTimeGameLive(), match2.getTimeGameLive());
-		
-		List<Match> matchesByType = matchDao.readMatchByFeedType(FeedTypes.IN_RUNNING.getTypeId());
-		assertFalse(matchesByType.isEmpty());
+		matchDao.createMatches(matches);		
 	}
 	
 	@Test

@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>samvo</groupId>
   <artifactId>samvo-statistics-application</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>1.0.0</version>
 
   <parent>
     <groupId>org.springframework.boot</groupId>
@@ -20,7 +20,6 @@
   	<commons.lang.version>3.4</commons.lang.version>    
   	<jaxb.version>2.1</jaxb.version>
   	<junit.version>4.9</junit.version>
-  	<samvo.client.version>1.0.0</samvo.client.version>
   	<postgres.version>9.4-1201-jdbc41</postgres.version>
   	<poi.version>3.12</poi.version>
   	<joda.version>2.8.1</joda.version>
@@ -87,22 +86,7 @@
 		<groupId>org.postgresql</groupId>
 		<artifactId>postgresql</artifactId>
 		<version>${postgres.version}</version>
-	</dependency>
-  	<dependency>
-  		<groupId>samvo</groupId>
-  		<artifactId>samvo-ops-client</artifactId>
-  		<version>${samvo.client.version}</version>
-  		<exclusions>
-  			<exclusion>
-  				<groupId>org.springframework</groupId>
-  				<artifactId>spring-web</artifactId>
-  			</exclusion>
-  			<exclusion>
-  				<groupId>org.springframework</groupId>
-  				<artifactId>spring-oxm</artifactId>
-  			</exclusion>  			
-  		</exclusions>
-  	</dependency>  	
+	</dependency>  	
 	<dependency>
 		<groupId>junit</groupId>
 		<artifactId>junit</artifactId>
@@ -152,5 +136,5 @@
             <artifactId>spring-boot-maven-plugin</artifactId>
         </plugin>      	      	      	
     </plugins>
-  </build>  
+  </build>
 </project>

@@ -25,7 +25,6 @@ import com.samvo.statistics.generator.TMStatisticsGenerator;
  * day of week   0-7 (0 or 7 is Sun)
  */
 @Component("statisticsSchedule")
-
 public class StatisticsSchedule {
 
 	/**
