@@ -49,12 +49,14 @@ public class StatisticsSchedule {
 	 */
 	//@Scheduled(cron="*/60 * * * * *")
 	public void createIrStats() {
-		LOGGER.info("IR Process started....");		
+		LOGGER.info("IR Process started....");	
+		System.out.println("IR Process started....");
 		try {
 			irStatisticsGenerator.runProcess();			
 		} catch (Exception e) {
 			LOGGER.info("IR Process exception - " + e.getMessage());
 		}
+		System.out.println("IR Process finished....");
 		LOGGER.info("IR Process finished....");
 	}
 
@@ -64,6 +66,7 @@ public class StatisticsSchedule {
 	//@Scheduled(cron="0 05 17 * * *")
 	//@Scheduled(cron="*/60 * * * * *")
 	public void createTodayStats() {
+		System.out.println("TM Process started....");
 		LOGGER.info("TM Process started....");
 		try {
 			tmStatisticsGenerator.runProcess();			
@@ -71,5 +74,6 @@ public class StatisticsSchedule {
 			LOGGER.info("TM Process exception - " + e.getMessage());
 		}
 		LOGGER.info("TM Process finished....");
+		System.out.println("TM Process finished....");
 	}
 }
