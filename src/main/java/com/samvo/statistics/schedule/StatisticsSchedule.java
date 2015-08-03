@@ -47,7 +47,7 @@ public class StatisticsSchedule {
 	/**
 	 * Run the in-running statistics generator process.
 	 */
-	//@Scheduled(cron="*/60 * * * * *")
+	@Scheduled(cron="*/60 * * * * *")
 	public void createIrStats() {
 		LOGGER.info("IR Process started....");	
 		System.out.println("IR Process started....");
@@ -63,8 +63,7 @@ public class StatisticsSchedule {
 	/**
 	 * Run the today market statistics generator process.
 	 */
-	//@Scheduled(cron="0 05 17 * * *")
-	@Scheduled(cron="*/60 * * * * *")
+	@Scheduled(cron="* */5 * * * *")
 	public void createTodayStats() {
 		System.out.println("TM Process started....");
 		LOGGER.info("TM Process started....");
