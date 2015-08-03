@@ -47,6 +47,7 @@ public class ExportServiceImpl implements ExportService {
 	private static final String MINUTE_HEADING = "Minute %s";
 	
 	public void create(Integer feedTypeId, OutputStream outputStream) {
+		System.out.println(String.format("create(feedTypeId=%s,outputStream=%s)", String.valueOf(feedTypeId), String.valueOf(outputStream)));
 		if (LOGGER.isDebugEnabled()) {LOGGER.debug(String.format("create(feedTypeId=%s,outputStream=%s)", String.valueOf(feedTypeId), String.valueOf(outputStream)));}
 		try {
 			XSSFWorkbook workBook = new XSSFWorkbook();		

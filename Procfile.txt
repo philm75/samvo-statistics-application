@@ -1,0 +1,1 @@
+web: java -Dserver.port=$PORT -Ddatabase.url=$DATABASE_URL $JAVA_OPTS -jar target/samvo-statistics-application-1.0.0.jar

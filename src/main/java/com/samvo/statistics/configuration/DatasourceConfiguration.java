@@ -48,6 +48,7 @@ public class DatasourceConfiguration {
 			String password = StringUtils.EMPTY;
 			String url      = StringUtils.EMPTY;
 			String dbProperty = System.getProperty("database.url");
+			System.out.println("dbProperty=" + dbProperty);
 			if (StringUtils.isNotBlank(dbProperty)) {
 				dbUri = new URI(dbProperty);
 				
@@ -69,6 +70,10 @@ public class DatasourceConfiguration {
 			if (LOGGER.isInfoEnabled()) {LOGGER.info("url=" + url);}
 			if (LOGGER.isInfoEnabled()) {LOGGER.info("username=" + username);}
 			if (LOGGER.isInfoEnabled()) {LOGGER.info("password=" + password);}
+
+			System.out.println("url=" + url);
+			System.out.println("username=" + username);
+			System.out.println("password=" + password);
 			
 	        BasicDataSource basicDataSource = new BasicDataSource();
 	        basicDataSource.setUrl(url);

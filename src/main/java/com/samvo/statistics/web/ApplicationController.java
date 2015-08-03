@@ -79,10 +79,13 @@ public class ApplicationController {
 	 */
 	@RequestMapping(value="/matches/export", method=RequestMethod.GET)
 	public void export(HttpServletResponse response) {
+		System.out.println("export()");
         response.setContentType(DOWNLOAD_CONTENT_TYPE);
         response.setHeader(CONTENT_DISPOSITION, String.format(ATTACHMENT, EXPORT_FILE_NAME));
 		try {
+			System.out.println("running export()");
 			exportService.create(FeedTypes.IN_RUNNING.getTypeId(), response.getOutputStream());
+			System.out.println("complete export()");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
