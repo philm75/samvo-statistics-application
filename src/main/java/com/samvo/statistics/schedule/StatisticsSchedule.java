@@ -63,7 +63,7 @@ public class StatisticsSchedule {
 	/**
 	 * Run the today market statistics generator process.
 	 */
-	@Scheduled(cron="* 0/5 * * * *")
+	@Scheduled(cron="0 0/5 * * * ?")
 	public void createTodayStats() {
 		System.out.println("TM Process started....");
 		LOGGER.info("TM Process started....");
