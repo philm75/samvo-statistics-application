@@ -115,7 +115,8 @@ public class IRStatisticsGenerator extends StatisticsGenerator {
 						  System.out.println("DB KO PRICE - " + match.getKoOuHfPrice());
 						  System.out.println("XML KO PRICE - " + entry.getValue().getKoOuHfPrice());
 						  
-						  if (match.getKoOuHfPrice() == null && entry.getValue().getKoOuHfPrice() != null) {
+						  if ((match.getKoOuHfPrice() == 0.0 || match.getKoOuHfPrice() == null) && 
+							   entry.getValue().getKoOuHfPrice() != null) {
 							  if (LOGGER.isInfoEnabled()) {LOGGER.info("Update Match KO prices for match key - " + entry.getKey());}
 							  System.out.println("Update Match KO prices for match key - " + entry.getKey());
 							  statisticsService.updateKo(entry.getValue().getMatchId(), 
