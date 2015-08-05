@@ -217,7 +217,7 @@ public class MatchDaoImpl implements MatchDao {
     																  "AND    M.FEED_TYPE_ID = MT.FEED_TYPE_ID " +
     																  "AND    M.BOOKIE_ID = B.BOOKIE_ID " +
     																  "AND    M.FEED_TYPE_ID = :feedTypeId " +
-    																  "AND    M.KICK_OFF_OU_HF_PRICE > 0 " +
+    																  "AND    M.KICK_OFF_OU_HF_PRICE IS NOT NULL " +
     																  "ORDER BY M.MATCH_TIME, M.MATCH_ID, MT.MINUTE, M.BOOKIE_ID";
     																  
     private static final String UPDATE_FIRST_GOAL_SCORED_SQL = "UPDATE OPSFEED.MATCH " +
@@ -319,6 +319,15 @@ public class MatchDaoImpl implements MatchDao {
 				match.getKoDrawPrice() != null ||
 				match.getKoOuHfPrice() != null) {
 			
+				System.out.println("Match exists already, updating TM prices " +
+			            "matchId=" + String.valueOf(match.getMatchId()) + 
+					    ",bookieId=" + String.valueOf(match.getBookieId()) + 
+					    ",feedType=" + String.valueOf(match.getFeedTypeId()) +
+					    " KO Home Price=" + String.valueOf(match.getKoHomePrice()) +
+					    ",KO Draw Price=" + String.valueOf(match.getKoDrawPrice()) + 
+					    ",KO Away Price=" + String.valueOf(match.getKoAwayPrice()) +
+					    ",KO HF Price  =" + String.valueOf(match.getKoOuHfPrice()));
+				
 				LOGGER.info("Match exists already, updating prices " +
 				            "matchId=" + String.valueOf(match.getMatchId()) + 
 						    ",bookieId=" + String.valueOf(match.getBookieId()) + 

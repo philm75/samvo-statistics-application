@@ -83,15 +83,20 @@ public class IRStatisticsGenerator extends StatisticsGenerator {
 			
 			Match match = null;
 			
-			for (Map.Entry<String, Match> entry : matches.entrySet()) {				
+			for (Map.Entry<String, Match> entry : matches.entrySet()) {
 				  if (matchCache.containsKey(entry.getKey())) {
+					  if (LOGGER.isInfoEnabled()) {LOGGER.info("Processing match - " + entry.getKey());}
+					  System.out.println("Processing match - " + entry.getKey());
+					  
 					  match = matchCache.get(entry.getKey());
 				  
 					  /**
 					   * If the match is running, update the indicator. 
 					   */
-					  if (entry.getValue().getRunningIndicator().intValue() == IN_RUNNING_INDICATOR && match.getRunningIndicator().intValue() == NOT_RUNNING_INDICATOR) {
-						  if (LOGGER.isInfoEnabled()) {LOGGER.info("Update Match running indicator - " + entry.getKey());}
+					  if (entry.getValue().getRunningIndicator().intValue() == IN_RUNNING_INDICATOR && 
+						  match.getRunningIndicator().intValue() == NOT_RUNNING_INDICATOR) {
+						  System.out.println("Update Match running indicator for " + entry.getKey());
+						  if (LOGGER.isInfoEnabled()) {LOGGER.info("Update Match running indicator for " + entry.getKey());}
 					  
 						  /**
 						   * Set in-running indicator.
@@ -104,9 +109,15 @@ public class IRStatisticsGenerator extends StatisticsGenerator {
 						  /**
 						   * If the match in the DB has no KO prices then update.
 						   */
+						  if (LOGGER.isInfoEnabled()) {LOGGER.info("DB KO PRICE - " + match.getKoOuHfPrice());}
+						  if (LOGGER.isInfoEnabled()) {LOGGER.info("XML KO PRICE - " + entry.getValue().getKoOuHfPrice());}
+						  
+						  System.out.println("DB KO PRICE - " + match.getKoOuHfPrice());
+						  System.out.println("XML KO PRICE - " + entry.getValue().getKoOuHfPrice());
+						  
 						  if (match.getKoOuHfPrice() == null && entry.getValue().getKoOuHfPrice() != null) {
 							  if (LOGGER.isInfoEnabled()) {LOGGER.info("Update Match KO prices for match key - " + entry.getKey());}
-							  
+							  System.out.println("Update Match KO prices for match key - " + entry.getKey());
 							  statisticsService.updateKo(entry.getValue().getMatchId(), 
 									  					 entry.getValue().getKoHomePrice(), 
 									  					 entry.getValue().getKoDrawPrice(), 
@@ -125,6 +136,7 @@ public class IRStatisticsGenerator extends StatisticsGenerator {
 					  if (entry.getValue().getAwayScore().intValue() > 0 || entry.getValue().getHomeScore().intValue() > 0) {					  
 						  if (match.getTimeFirstGoal().intValue() == -1) {
 							  if (LOGGER.isInfoEnabled()) {LOGGER.info("Goal scored in match " + entry.getKey());}
+							  System.out.println("Goal scored in match " + entry.getKey());
 							  statisticsService.updateFirstGoalScore(entry.getValue().getMatchId(), 
 									  								 timeInGame, 
 									  								 feedTypeId, 
@@ -144,6 +156,13 @@ public class IRStatisticsGenerator extends StatisticsGenerator {
 																						    String.valueOf(entry.getValue().getKoOuHfPrice())));
 							  }
 						  
+							  System.out.println(String.format("Update minute for match ID=%s,bookieId=%s,feedTypeId=%s,timeInGame=%s,price=%s", 
+							  String.valueOf(entry.getValue().getMatchId()), 
+							  String.valueOf(entry.getValue().getBookieId()),
+							  String.valueOf(entry.getValue().getFeedTypeId()),
+							  String.valueOf(timeInGame),
+							  String.valueOf(entry.getValue().getKoOuHfPrice())));
+							  
 							  statisticsService.updateMatchMinute(entry.getValue().getMatchId(), 
 									  							  entry.getValue().getBookieId(), 		
 									  							  entry.getValue().getFeedTypeId(),
