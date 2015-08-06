@@ -62,10 +62,11 @@ public interface StatisticsService {
 	 * @param awayPrice
 	 * @param htUndefHgPrice
 	 * @param feedTypeId
+	 * @param indicator
 	 * @param bookieId
 	 */
- 	void updateKo(Integer matchId, Double homePrice, Double drawPrice, Double awayPrice, Double htUndefHgPrice, Integer feedTypeId, Integer bookieId);
-
+ 	void updateKo(Integer matchId, Double homePrice, Double drawPrice, Double awayPrice, Double htUndefHgPrice, Integer feedTypeId, Integer indicator, Integer bookieId);
+	  
 	/**
 	 * Get map of bookies (key - name, value - bookie ID)
 	 * 
@@ -96,14 +97,4 @@ public interface StatisticsService {
 	 * Stop in-running market process.
 	 */
 	void interruptInRunningMarket();
-	
-	/**
-	 * Update in-running indicator.
-	 * 
-	 * @param matchId
-	 * @param feedTypeId
-	 * @param indicator
-	 * @param bookieId
-	 */
-	void updateInRunningIndicator(Integer matchId, Integer feedTypeId, Integer indicator, Integer bookieId);
 }

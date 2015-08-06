@@ -1,6 +1,5 @@
 package com.samvo.statistics.dao;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 import java.util.ArrayList;
@@ -190,8 +189,9 @@ public class MatchDaoTest extends BaseDaoTest {
 		Double awayPrice = 3.0;
 		Double htUndefHgPrice = 4.0;
 		Integer bookieId = new Integer(1);
+		Integer indicator = new Integer(1);
 		Integer feedTypeId = FeedTypes.IN_RUNNING.getTypeId();
-		matchDao.updateKo(matchId, homePrice, drawPrice, awayPrice, htUndefHgPrice, feedTypeId, bookieId);
+		matchDao.updateKo(matchId, homePrice, drawPrice, awayPrice, htUndefHgPrice, feedTypeId, indicator, bookieId);
 	}
 	
 	@Test
@@ -199,14 +199,5 @@ public class MatchDaoTest extends BaseDaoTest {
 		Integer feedTypeId = FeedTypes.IN_RUNNING.getTypeId();
 		Map<String, Match> matches = matchDao.readMatchesByIndicator(feedTypeId);
 		assert(matches.size() > 0);
-	}
-	
-	@Test
-	public void testUpdateInRunningIndicator() {
-		Integer matchId = 1; 
-		Integer bookieId = new Integer(1);
-		Integer feedTypeId = FeedTypes.IN_RUNNING.getTypeId();
-		Integer indicator = 1;
-		matchDao.updateInRunningIndicator(matchId, feedTypeId, indicator, bookieId);
 	}
 }

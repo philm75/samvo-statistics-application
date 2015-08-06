@@ -69,9 +69,10 @@ public interface MatchDao {
 	 * @param awayPrice
 	 * @param htUndefHgPrice
 	 * @param feedTypeId
+	 * @param indicator
 	 * @param bookieId
 	 */
-	void updateKo(Integer matchId, Double homePrice, Double drawPrice, Double awayPrice, Double htUndefHgPrice, Integer feedTypeId, Integer bookieId);
+	void updateKo(Integer matchId, Double homePrice, Double drawPrice, Double awayPrice, Double htUndefHgPrice, Integer feedTypeId, Integer indicator, Integer bookieId);
 	
 	/**
 	 * Read matches by feed type.
@@ -80,14 +81,4 @@ public interface MatchDao {
 	 * @return Map<String, Match>
 	 */
 	Map<String, Match> readMatchesByIndicator(Integer feedTypeId);
-	
-	/**
-	 * Update in-running indicator.
-	 * 
-	 * @param matchId
-	 * @param feedTypeId
-	 * @param indicator
-	 * @param bookieId
-	 */
-	void updateInRunningIndicator(Integer matchId, Integer feedTypeId, Integer indicator, Integer bookieId);
 }

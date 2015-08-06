@@ -217,6 +217,7 @@ public class MatchDaoImpl implements MatchDao {
     																  "AND    M.FEED_TYPE_ID = MT.FEED_TYPE_ID " +
     																  "AND    M.BOOKIE_ID = B.BOOKIE_ID " +
     																  "AND    M.FEED_TYPE_ID = :feedTypeId " +
+    																  "AND    M.RUNNING_INDICATOR = 1 " +
     																  "AND    M.KICK_OFF_OU_HF_PRICE IS NOT NULL " +
     																  "ORDER BY M.MATCH_TIME, M.MATCH_ID, MT.MINUTE, M.BOOKIE_ID";
     																  
@@ -230,16 +231,11 @@ public class MatchDaoImpl implements MatchDao {
     												   "SET    KICK_OFF_HOME_PRICE  = :homePrice, " + 
     												   "       KICK_OFF_AWAY_PRICE  = :awayPrice, " +
     												   "       KICK_OFF_DRAW_PRICE  = :drawPrice, " +
-    												   "       KICK_OFF_OU_HF_PRICE = :ouHfPrice  " +
+    												   "       KICK_OFF_OU_HF_PRICE = :ouHfPrice, " +
+    												   "       RUNNING_INDICATOR    = :indicator  " +
     												   "WHERE  MATCH_ID             = :matchId    " +
 													   "AND    FEED_TYPE_ID         = :feedTypeId " +
     												   "AND    BOOKIE_ID            = :bookieId   ";
-
-    private static final String UPDATE_INDICATOR_SQL = "UPDATE OPSFEED.MATCH " +
-			   										   "SET    RUNNING_INDICATOR = :indicator  " +
-			   										   "WHERE  MATCH_ID          = :matchId    " +
-			   										   "AND    FEED_TYPE_ID      = :feedTypeId " +
-			   										   "AND    BOOKIE_ID         = :bookieId   ";
 
 	/**
 	 * JDBC Template.
@@ -272,8 +268,7 @@ public class MatchDaoImpl implements MatchDao {
     
 	@Override
 	public void createMatch(Match match) {
-		if (LOGGER.isDebugEnabled()) {LOGGER.debug(String.format("createMatch(match=%s)", match.toString()));}
-		
+		if (LOGGER.isDebugEnabled()) {LOGGER.debug(String.format("createMatch(match=%s)", match.toString()));}		
 		Match dbMatch = exists(match);		
 		if (dbMatch == null) {
 			try {
@@ -310,44 +305,7 @@ public class MatchDaoImpl implements MatchDao {
 			} catch (Exception e) {
 				LOGGER.info("Exception=" + e.getMessage());
 			}			
-		} else {
-			/**
-			 * Update KO prices.
-			 */
-			if (match.getKoAwayPrice() != null ||
-				match.getKoHomePrice() != null ||
-				match.getKoDrawPrice() != null ||
-				match.getKoOuHfPrice() != null) {
-			
-				System.out.println("Match exists already, updating TM prices " +
-			            "matchId=" + String.valueOf(match.getMatchId()) + 
-					    ",bookieId=" + String.valueOf(match.getBookieId()) + 
-					    ",feedType=" + String.valueOf(match.getFeedTypeId()) +
-					    " KO Home Price=" + String.valueOf(match.getKoHomePrice()) +
-					    ",KO Draw Price=" + String.valueOf(match.getKoDrawPrice()) + 
-					    ",KO Away Price=" + String.valueOf(match.getKoAwayPrice()) +
-					    ",KO HF Price  =" + String.valueOf(match.getKoOuHfPrice()));
-				
-				LOGGER.info("Match exists already, updating prices " +
-				            "matchId=" + String.valueOf(match.getMatchId()) + 
-						    ",bookieId=" + String.valueOf(match.getBookieId()) + 
-						    ",feedType=" + String.valueOf(match.getFeedTypeId()) +
-						    " KO Home Price=" + String.valueOf(match.getKoHomePrice()) +
-						    ",KO Draw Price=" + String.valueOf(match.getKoDrawPrice()) + 
-						    ",KO Away Price=" + String.valueOf(match.getKoAwayPrice()) +
-						    ",KO HF Price  =" + String.valueOf(match.getKoOuHfPrice()));
-							
-				updateKo(match.getMatchId(), 
-						 match.getKoHomePrice(), 
-						 match.getKoDrawPrice(), 
-						 match.getKoAwayPrice(), 
-						 match.getKoOuHfPrice(), 
-						 match.getFeedTypeId(), 
-						 match.getBookieId());				
-			}
-			
-		}
-		
+		} 
 	}
 
 	@Override
@@ -393,11 +351,17 @@ public class MatchDaoImpl implements MatchDao {
 	}
 
 	@Override
-	public void updateKo(Integer matchId, Double homePrice, Double drawPrice, Double awayPrice, Double htUndefHgPrice, Integer feedTypeId, Integer bookieId) {
+	public void updateKo(Integer matchId, Double homePrice, Double drawPrice, Double awayPrice, Double htUndefHgPrice, Integer feedTypeId, Integer indicator, Integer bookieId) {
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug(String.format("updateKoPrices(matchId=%s,feedTypeId=%s,homePrice=%s,drawPrice=%s,awayPrice=%s,htUndefHgPrice=%s,indicator=%s,bookieId=%s)", 
-				                                   String.valueOf(matchId), String.valueOf(feedTypeId), String.valueOf(homePrice), String.valueOf(drawPrice), String.valueOf(awayPrice), 
-				                                   String.valueOf(htUndefHgPrice), String.valueOf(bookieId)));
+				                        String.valueOf(matchId), 
+				                        String.valueOf(feedTypeId), 
+				                        String.valueOf(homePrice), 
+				                        String.valueOf(drawPrice), 
+				                        String.valueOf(awayPrice), 
+				                        String.valueOf(htUndefHgPrice), 
+				                        String.valueOf(indicator), 
+				                        String.valueOf(bookieId)));
 		}
 		
 		Map<String, Object> paramMap = new HashMap<String, Object>();
@@ -407,6 +371,7 @@ public class MatchDaoImpl implements MatchDao {
 		paramMap.put("awayPrice", awayPrice);		
 		paramMap.put("drawPrice", drawPrice);
 		paramMap.put("ouHfPrice", htUndefHgPrice);
+		paramMap.put("indicator", indicator);
 		paramMap.put("bookieId" , bookieId);
 		jdbcTemplate.update(UPDATE_KO_PRICES_SQL, paramMap);	
 	}
@@ -419,17 +384,6 @@ public class MatchDaoImpl implements MatchDao {
 		paramMap.put("feedTypeId", feedTypeId);
 		return (Map<String, Match>)jdbcTemplate.query(READ_BY_INDICATOR_SQL, paramMap, matchResultSetExtractor);
 	}
-	
-	@Override
-	public void updateInRunningIndicator(Integer matchId, Integer feedTypeId, Integer indicator, Integer bookieId) {
-		if (LOGGER.isDebugEnabled()) {LOGGER.debug(String.format("updateInRunningIndicator(matchId=%s,feedTypeId=%s,indicator=%s,bookieId=%s)", String.valueOf(matchId), String.valueOf(feedTypeId), String.valueOf(indicator), String.valueOf(bookieId)));}
-		Map<String, Object> paramMap = new HashMap<String, Object>();
-		paramMap.put("indicator" , indicator);
-		paramMap.put("matchId"   , matchId);
-		paramMap.put("feedTypeId", feedTypeId);
-		paramMap.put("bookieId"  , bookieId);
-		jdbcTemplate.update(UPDATE_INDICATOR_SQL, paramMap);
-	}	
 
     private Match exists(Match match) {
     	try {
