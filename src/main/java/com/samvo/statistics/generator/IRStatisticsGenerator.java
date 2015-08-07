@@ -85,21 +85,21 @@ public class IRStatisticsGenerator extends StatisticsGenerator {
 			
 			for (Map.Entry<String, Match> entry : matches.entrySet()) {				
 				  if (matchCache.containsKey(entry.getKey())) {
+					  if (LOGGER.isInfoEnabled()) {LOGGER.info("Process match key - " + entry.getKey());}
+					  System.out.println("Process match key - " + entry.getKey());
+					  
 					  match = matchCache.get(entry.getKey());
 				  
 					  /**
-					   * If the match is running, update the indicator. 
+					   * If the match is running, update the indicator.
 					   */
 					  if (entry.getValue().getRunningIndicator().intValue() == IN_RUNNING_INDICATOR && match.getRunningIndicator().intValue() == NOT_RUNNING_INDICATOR) {
-						  if (LOGGER.isInfoEnabled()) {LOGGER.info("Update Match KO prices for match key - " + entry.getKey());}					
-						  statisticsService.updateKo(entry.getValue().getMatchId(), 
-								  					 entry.getValue().getKoHomePrice(), 
-								  					 entry.getValue().getKoDrawPrice(), 
-								  					 entry.getValue().getKoAwayPrice(), 
-								  					 entry.getValue().getKoOuHfPrice(), 
-								  					 feedTypeId, 
-								  					 IN_RUNNING_INDICATOR,
-								  					 entry.getValue().getBookieId());
+						  if (LOGGER.isInfoEnabled()) {LOGGER.info("Update Match in-running indicator - " + entry.getKey());}
+						  System.out.println("Update Match running indicator - " + entry.getKey());
+						  statisticsService.updateInRunningIndicator(entry.getValue().getMatchId(), 
+								  									 feedTypeId, 
+								  									 IN_RUNNING_INDICATOR, 
+								  									 entry.getValue().getBookieId());
 					  }
 				  
 					  Integer timeInGame = timeGameLiveMinute(entry.getValue().getTimeGameLive());
@@ -110,6 +110,7 @@ public class IRStatisticsGenerator extends StatisticsGenerator {
 					  if (entry.getValue().getAwayScore().intValue() > 0 || entry.getValue().getHomeScore().intValue() > 0) {					  
 						  if (match.getTimeFirstGoal().intValue() == -1) {
 							  if (LOGGER.isInfoEnabled()) {LOGGER.info("Goal scored in match " + entry.getKey());}
+							  System.out.println("Goal scored in match " + entry.getKey());
 							  statisticsService.updateFirstGoalScore(entry.getValue().getMatchId(), 
 									  								 timeInGame, 
 									  								 feedTypeId, 
@@ -120,6 +121,13 @@ public class IRStatisticsGenerator extends StatisticsGenerator {
 						   * No goal score set, Under 0.5 HT price
 						   */					  
 						  if (timeInGame < 56 && entry.getValue().getKoOuHfPrice() != null) {
+							  System.out.println(String.format("Update minute for match ID=%s,bookieId=%s,feedTypeId=%s,timeInGame=%s,price=%s", 
+										         String.valueOf(entry.getValue().getMatchId()), 
+									             String.valueOf(entry.getValue().getBookieId()),
+									             String.valueOf(entry.getValue().getFeedTypeId()),
+									             String.valueOf(timeInGame),
+									             String.valueOf(entry.getValue().getKoOuHfPrice())));
+							  
 							  if (LOGGER.isInfoEnabled()) {						    
 							  	LOGGER.info(String.format("Update minute for match ID=%s,bookieId=%s,feedTypeId=%s,timeInGame=%s,price=%s", 
 							  																String.valueOf(entry.getValue().getMatchId()), 

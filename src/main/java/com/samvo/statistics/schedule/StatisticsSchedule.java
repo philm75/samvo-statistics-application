@@ -47,7 +47,7 @@ public class StatisticsSchedule {
 	/**
 	 * Run the in-running statistics generator process.
 	 */
-	@Scheduled(cron="*/60 * * * * *")
+	//@Scheduled(cron="*/60 * * * * *")
 	public void createIrStats() {
 		LOGGER.info("IR Process started....");	
 		System.out.println("IR Process started....");

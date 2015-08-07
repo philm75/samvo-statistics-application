@@ -1,9 +1,10 @@
 package com.samvo.statistics.generator;
 
-import java.util.ArrayList;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.ResourceAccessException;
 
@@ -19,6 +20,11 @@ import com.samvo.statistics.model.match.Match;
 @Component("tmStatisticsGenerator")
 public class TMStatisticsGenerator extends StatisticsGenerator {
 
+	/**
+	 * Logger.
+	 */
+	private static final Logger LOGGER = Logger.getLogger(TMStatisticsGenerator.class);
+	
 	/**
 	 * Session Token.
 	 */
@@ -52,12 +58,31 @@ public class TMStatisticsGenerator extends StatisticsGenerator {
 			processTMResponse(todayMatches, feedTypeId, matches);			
 		}
 				
-		/**
-		 * Populate the database. 
-		 */
-		if (!matches.isEmpty()) {
-			statisticsService.createMatches(new ArrayList<Match>(matches.values()));			
+		for (Map.Entry<String, Match> entry : matches.entrySet()) {
+			/**
+			 * Has match o/u half time market half a goal price.
+			 */
+			if (TMStatisticsGenerator.hasOuHtPrice(entry.getValue())) {
+				if (LOGGER.isInfoEnabled()) {LOGGER.info("Match in market key - " + entry.getKey());}
+				System.out.println("Match in market key - " + entry.getKey());
+				statisticsService.createMatch(entry.getValue());
+			}
 		}
+	}
+	
+	private static boolean hasOuHtPrice(Match match) {
+		boolean result = false;
+		if (match.getKoOuHfPrice() == null) {
+			result = false;
+		} else {
+			BigDecimal value = new BigDecimal(match.getKoOuHfPrice());
+			if (value.compareTo(BigDecimal.ZERO) > 0) {
+				result = true;
+			} else {
+				result = false;
+			}
+		}
+		return result;
 	}
 	
 	private Matches getTodayMarket() {
@@ -78,5 +103,5 @@ public class TMStatisticsGenerator extends StatisticsGenerator {
 			}			
 		}
 		return matches;
-	}	
+	}
 }

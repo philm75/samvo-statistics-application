@@ -189,9 +189,8 @@ public class MatchDaoTest extends BaseDaoTest {
 		Double awayPrice = 3.0;
 		Double htUndefHgPrice = 4.0;
 		Integer bookieId = new Integer(1);
-		Integer indicator = new Integer(1);
 		Integer feedTypeId = FeedTypes.IN_RUNNING.getTypeId();
-		matchDao.updateKo(matchId, homePrice, drawPrice, awayPrice, htUndefHgPrice, feedTypeId, indicator, bookieId);
+		matchDao.updateKo(matchId, homePrice, drawPrice, awayPrice, htUndefHgPrice, feedTypeId, bookieId);
 	}
 	
 	@Test

@@ -1,5 +1,6 @@
 package com.samvo.statistics.dao.impl;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -231,12 +232,41 @@ public class MatchDaoImpl implements MatchDao {
     												   "SET    KICK_OFF_HOME_PRICE  = :homePrice, " + 
     												   "       KICK_OFF_AWAY_PRICE  = :awayPrice, " +
     												   "       KICK_OFF_DRAW_PRICE  = :drawPrice, " +
-    												   "       KICK_OFF_OU_HF_PRICE = :ouHfPrice, " +
-    												   "       RUNNING_INDICATOR    = :indicator  " +
+    												   "       KICK_OFF_OU_HF_PRICE = :ouHfPrice  " +
     												   "WHERE  MATCH_ID             = :matchId    " +
 													   "AND    FEED_TYPE_ID         = :feedTypeId " +
     												   "AND    BOOKIE_ID            = :bookieId   ";
 
+    private static final String UPDATE_KO_HOME_PRICE_SQL = "UPDATE OPSFEED.MATCH " +
+													   	   "SET    KICK_OFF_HOME_PRICE  = :homePrice  " + 
+													   	   "WHERE  MATCH_ID             = :matchId    " +
+													   	   "AND    FEED_TYPE_ID         = :feedTypeId " +
+													   	   "AND    BOOKIE_ID            = :bookieId   ";
+    
+    private static final String UPDATE_KO_AWAY_PRICE_SQL = "UPDATE OPSFEED.MATCH " +
+													   	   "SET    KICK_OFF_AWAY_PRICE  = :awayPrice  " +
+													   	   "WHERE  MATCH_ID             = :matchId    " +
+													   	   "AND    FEED_TYPE_ID         = :feedTypeId " +
+													   	   "AND    BOOKIE_ID            = :bookieId   ";
+    
+    private static final String UPDATE_KO_DRAW_PRICE_SQL = "UPDATE OPSFEED.MATCH " +
+														   "SET    KICK_OFF_DRAW_PRICE  = :drawPrice  " +
+														   "WHERE  MATCH_ID             = :matchId    " +
+														   "AND    FEED_TYPE_ID         = :feedTypeId " +
+														   "AND    BOOKIE_ID            = :bookieId   ";
+    
+    private static final String UPDATE_KO_UOHT_PRICE_SQL = "UPDATE OPSFEED.MATCH " +
+														   "SET    KICK_OFF_OU_HF_PRICE = :ouHfPrice  " +
+														   "WHERE  MATCH_ID             = :matchId    " +
+														   "AND    FEED_TYPE_ID         = :feedTypeId " +
+														   "AND    BOOKIE_ID            = :bookieId   ";
+    
+    private static final String UPDATE_INDICATOR_SQL = "UPDATE OPSFEED.MATCH " +
+    												   "SET    RUNNING_INDICATOR = :indicator  " +
+    												   "WHERE  MATCH_ID          = :matchId    " +
+    												   "AND    FEED_TYPE_ID      = :feedTypeId " +
+    												   "AND    BOOKIE_ID         = :bookieId   ";
+    
 	/**
 	 * JDBC Template.
 	 */
@@ -271,6 +301,8 @@ public class MatchDaoImpl implements MatchDao {
 		if (LOGGER.isDebugEnabled()) {LOGGER.debug(String.format("createMatch(match=%s)", match.toString()));}		
 		Match dbMatch = exists(match);		
 		if (dbMatch == null) {
+			if (LOGGER.isInfoEnabled()) {LOGGER.info("Creating Match key - " + match.toString());}
+			System.out.println("Creating Match key - " + match.toString());
 			try {
 				/**
 				 * Create match.
@@ -305,7 +337,46 @@ public class MatchDaoImpl implements MatchDao {
 			} catch (Exception e) {
 				LOGGER.info("Exception=" + e.getMessage());
 			}			
-		} 
+		} else {
+			/**
+			 * Has match started? 
+			 */
+			if (dbMatch.getRunningIndicator().intValue() == 0) {
+				Map<String, Object> paramMap = new HashMap<String, Object>();
+				paramMap.put("matchId"   , match.getMatchId());
+				paramMap.put("feedTypeId", match.getFeedTypeId());
+				paramMap.put("bookieId"  , match.getBookieId());
+				
+				if (hasPriceChanged(match.getKoHomePrice(), dbMatch.getKoHomePrice())) {
+					if (LOGGER.isInfoEnabled()) {LOGGER.info("Update Home Price for Match - " + match.toString());}
+					System.out.println("Update Home Price for Match - " + match.toString());
+					
+					paramMap.put("homePrice", match.getKoHomePrice());
+					jdbcTemplate.update(UPDATE_KO_HOME_PRICE_SQL, paramMap);
+				}
+				if (hasPriceChanged(match.getKoAwayPrice(), dbMatch.getKoAwayPrice())) {
+					if (LOGGER.isInfoEnabled()) {LOGGER.info("Update Away Price for Match - " + match.toString());}
+					System.out.println("Update Away Price for Match - " + match.toString());
+					
+					paramMap.put("awayPrice", match.getKoAwayPrice());
+					jdbcTemplate.update(UPDATE_KO_AWAY_PRICE_SQL, paramMap);
+				}
+				if (hasPriceChanged(match.getKoDrawPrice(), dbMatch.getKoDrawPrice())) {
+					if (LOGGER.isInfoEnabled()) {LOGGER.info("Update Draw Price for Match - " + match.toString());}
+					System.out.println("Update Draw Price for Match - " + match.toString());
+					
+					paramMap.put("drawPrice", match.getKoDrawPrice());
+					jdbcTemplate.update(UPDATE_KO_DRAW_PRICE_SQL, paramMap);
+				}
+				if (hasPriceChanged(match.getKoOuHfPrice(), dbMatch.getKoOuHfPrice())) {
+					if (LOGGER.isInfoEnabled()) {LOGGER.info("Update OU HT 0.5 Price for Match - " + match.toString());}
+					System.out.println("Update OU HT 0.5 Price for Match - " + match.toString());
+					
+					paramMap.put("ouHfPrice", match.getKoOuHfPrice());
+					jdbcTemplate.update(UPDATE_KO_UOHT_PRICE_SQL, paramMap);
+				}				
+			}
+		}
 	}
 
 	@Override
@@ -351,16 +422,15 @@ public class MatchDaoImpl implements MatchDao {
 	}
 
 	@Override
-	public void updateKo(Integer matchId, Double homePrice, Double drawPrice, Double awayPrice, Double htUndefHgPrice, Integer feedTypeId, Integer indicator, Integer bookieId) {
+	public void updateKo(Integer matchId, Double homePrice, Double drawPrice, Double awayPrice, Double htUndefHgPrice, Integer feedTypeId, Integer bookieId) {
 		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug(String.format("updateKoPrices(matchId=%s,feedTypeId=%s,homePrice=%s,drawPrice=%s,awayPrice=%s,htUndefHgPrice=%s,indicator=%s,bookieId=%s)", 
+			LOGGER.debug(String.format("updateKoPrices(matchId=%s,feedTypeId=%s,homePrice=%s,drawPrice=%s,awayPrice=%s,htUndefHgPrice=%s,bookieId=%s)", 
 				                        String.valueOf(matchId), 
 				                        String.valueOf(feedTypeId), 
 				                        String.valueOf(homePrice), 
 				                        String.valueOf(drawPrice), 
 				                        String.valueOf(awayPrice), 
 				                        String.valueOf(htUndefHgPrice), 
-				                        String.valueOf(indicator), 
 				                        String.valueOf(bookieId)));
 		}
 		
@@ -371,7 +441,6 @@ public class MatchDaoImpl implements MatchDao {
 		paramMap.put("awayPrice", awayPrice);		
 		paramMap.put("drawPrice", drawPrice);
 		paramMap.put("ouHfPrice", htUndefHgPrice);
-		paramMap.put("indicator", indicator);
 		paramMap.put("bookieId" , bookieId);
 		jdbcTemplate.update(UPDATE_KO_PRICES_SQL, paramMap);	
 	}
@@ -385,6 +454,17 @@ public class MatchDaoImpl implements MatchDao {
 		return (Map<String, Match>)jdbcTemplate.query(READ_BY_INDICATOR_SQL, paramMap, matchResultSetExtractor);
 	}
 
+	@Override
+	public void updateInRunningIndicator(Integer matchId, Integer feedTypeId, Integer indicator, Integer bookieId) {
+		if (LOGGER.isDebugEnabled()) {LOGGER.debug(String.format("updateInRunningIndicator(matchId=%s,feedTypeId=%s,indicator=%s,bookieId=%s)", String.valueOf(matchId), String.valueOf(feedTypeId), String.valueOf(indicator), String.valueOf(bookieId)));}
+		Map<String, Object> paramMap = new HashMap<String, Object>();
+		paramMap.put("indicator" , indicator);
+		paramMap.put("matchId"   , matchId);
+		paramMap.put("feedTypeId", feedTypeId);
+		paramMap.put("bookieId"  , bookieId);
+		jdbcTemplate.update(UPDATE_INDICATOR_SQL, paramMap);
+	}
+	
     private Match exists(Match match) {
     	try {
         	Map<String, Object> paramMap = new HashMap<String, Object>();
@@ -397,6 +477,30 @@ public class MatchDaoImpl implements MatchDao {
     	}
     }	
     
+	private boolean hasPriceChanged(Double feedValue, Double dbValue) {
+		boolean result = false;
+		if (feedValue == null) {
+			result = false;
+		} else {
+			BigDecimal decimalDbValue = new BigDecimal(dbValue);
+			if (decimalDbValue.compareTo(BigDecimal.ZERO) == 0) {
+				/**
+				 * No price, take feed value.
+				 */
+				result = true;
+			} else {
+				BigDecimal decimalFeedValue = new BigDecimal(feedValue);
+				if (decimalFeedValue.compareTo(decimalDbValue) != 0) {
+					/**
+					 * Feed price different to DB price, update.
+					 */
+					result = true;					
+				}
+			}
+		}
+		return result;
+	}
+	
 	private class MatchRowMapper implements RowMapper<Match> {
 
 		@Override
