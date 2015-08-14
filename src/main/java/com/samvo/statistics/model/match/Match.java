@@ -100,9 +100,14 @@ public class Match extends BaseModel {
 	private Double koDrawPrice;
 	
 	/**
-	 * Kick off Under 0.5 goal price.
+	 * Kick off Under market price.
 	 */
 	private Double koOuHfPrice;
+	
+	/**
+	 * OU Market handicap.
+	 */
+	private Double ouHandicapValue;
 	
 	/**
 	 * Match date.
@@ -464,4 +469,20 @@ public class Match extends BaseModel {
 	public void setBookieId(Integer bookieId) {
 		this.bookieId = bookieId;
 	}
+
+	/**
+	 * 
+	 * @return Double
+	 */
+	public Double getOuHandicapValue() {
+		return ouHandicapValue;
+	}
+
+	/**
+	 * 
+	 * @param ouHandicapValue
+	 */
+	public void setOuHandicapValue(Double ouHandicapValue) {
+		this.ouHandicapValue = ouHandicapValue;
+	}	
 }

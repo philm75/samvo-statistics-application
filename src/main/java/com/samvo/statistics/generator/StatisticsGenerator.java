@@ -67,6 +67,7 @@ abstract class StatisticsGenerator {
 		Double homePrice = null;
 		Double drawPrice = null;
 		Double ouHfPrice = null;
+		Double handicapValue = null;
 		String key = "";
 		
 		while (matchIterator.hasNext()) {
@@ -79,6 +80,7 @@ abstract class StatisticsGenerator {
 				homePrice = null;
 				drawPrice = null;
 				ouHfPrice = null;
+				handicapValue = null;
 				oddIterator = bookie.getOdds().iterator();
 				while(oddIterator.hasNext()) {
 					odd = oddIterator.next();
@@ -88,8 +90,11 @@ abstract class StatisticsGenerator {
 						drawPrice = Double.valueOf(odd.getDrawPrice());						
 					}
 					
-					if (StatisticsFilter.isHalfTimeMarketOverUnderHalfAGoal(odd.getMarket(), odd.getMarketType(), odd.getHandicapValue())) {
-						ouHfPrice = Double.valueOf(odd.getAwayAhMarketTypeOrUnderInOuMarketType());
+					if (StatisticsFilter.isHalfTimeMarketOverUnder(odd.getMarket(), odd.getMarketType(), odd.getHandicapValue())) {
+						if (ouHfPrice == null || Double.valueOf(odd.getAwayAhMarketTypeOrUnderInOuMarketType()) > ouHfPrice) {
+							ouHfPrice = Double.valueOf(odd.getAwayAhMarketTypeOrUnderInOuMarketType());
+							handicapValue = Double.valueOf(odd.getHandicapValue());							
+						}
 					}
 				}
 				if (matches.get(key) == null) {
@@ -99,7 +104,8 @@ abstract class StatisticsGenerator {
 														   awayPrice, 
 														   homePrice, 
 														   drawPrice,
-														   ouHfPrice));					
+														   ouHfPrice,
+														   handicapValue));					
 				}
 			}
 		}
@@ -152,7 +158,14 @@ abstract class StatisticsGenerator {
 				}
 
 				if (matches.get(key) == null) {
-					matches.put(key, DomainFactory.toMatch(feedTypeId, match, bookies.get(bookie.getName()), awayPrice, homePrice, drawPrice, ouHfPrice));
+					matches.put(key, DomainFactory.toMatch(feedTypeId, 
+														   match, 
+														   bookies.get(bookie.getName()), 
+														   awayPrice, 
+														   homePrice, 
+														   drawPrice, 
+														   ouHfPrice, 
+														   Double.valueOf(odd.getHandicapValue())));
 				}					
 			}
 		}

@@ -30,9 +30,10 @@ public class DomainFactory {
 	 * @param homePrice
 	 * @param drawPrice
 	 * @param koOuHfPrice
+	 * @param ouHandicapValue
 	 * @return Match
 	 */
-	public static Match toMatch(Integer feedTypeId, com.samvo.ops.client.model.feed.Match input, Integer bookieId, Double awayPrice, Double homePrice, Double drawPrice, Double koOuHfPrice) {
+	public static Match toMatch(Integer feedTypeId, com.samvo.ops.client.model.feed.Match input, Integer bookieId, Double awayPrice, Double homePrice, Double drawPrice, Double koOuHfPrice, Double ouHandicapValue) {
 		Match match = new Match();
 		match.setAwayScore(input.getAwayScore());
 		match.setAwayTeamId(input.getAwayTeamId());
@@ -53,6 +54,7 @@ public class DomainFactory {
 		match.setKoDrawPrice(drawPrice);
 		match.setKoHomePrice(homePrice);
 		match.setKoOuHfPrice(koOuHfPrice);
+		match.setOuHandicapValue(ouHandicapValue);
 		return match;
 	}
 	

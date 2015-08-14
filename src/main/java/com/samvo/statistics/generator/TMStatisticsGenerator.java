@@ -59,12 +59,13 @@ public class TMStatisticsGenerator extends StatisticsGenerator {
 		}
 				
 		for (Map.Entry<String, Match> entry : matches.entrySet()) {
+			LOGGER.info("Processing Match - " + entry.getValue().toString());
+			
 			/**
 			 * Has match o/u half time market half a goal price.
 			 */
 			if (TMStatisticsGenerator.hasOuHtPrice(entry.getValue())) {
 				if (LOGGER.isInfoEnabled()) {LOGGER.info("Match in market key - " + entry.getKey());}
-				System.out.println("Match in market key - " + entry.getKey());
 				statisticsService.createMatch(entry.getValue());
 			}
 		}

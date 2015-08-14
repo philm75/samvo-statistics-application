@@ -50,6 +50,7 @@ public class MatchDaoTest extends BaseDaoTest {
 		match.setTimeGameLive("2h 3");
 		match.setMatchDate(date);
 		match.setBookieId(1);
+		match.setOuHandicapValue(0.5);
 		
 		matchDao.createMatch(match);
 		
@@ -85,6 +86,7 @@ public class MatchDaoTest extends BaseDaoTest {
 		match1.setTimeGameLive("2h 3");
 		match1.setBookieId(1);
 		match1.setMatchDate(date);
+		match1.setOuHandicapValue(0.5);
 		
 		Match match2 = new Match();
 		match2.setAwayScore(1);
@@ -107,7 +109,7 @@ public class MatchDaoTest extends BaseDaoTest {
 		match2.setTimeGameLive("2h 3");
 		match2.setBookieId(1);
 		match2.setMatchDate(date);
-		
+		match2.setOuHandicapValue(1.5);
 		matches.add(match1);
 		matches.add(match2);
 		
@@ -140,6 +142,7 @@ public class MatchDaoTest extends BaseDaoTest {
 		match1.setTimeGameLive("2h 3");
 		match1.setBookieId(new Integer(4));
 		match1.setMatchDate(date);
+		match1.setOuHandicapValue(0.5);
 		
 		Match match2 = new Match();
 		match2.setAwayScore(1);
@@ -162,6 +165,7 @@ public class MatchDaoTest extends BaseDaoTest {
 		match2.setTimeGameLive("2h 3");
 		match2.setBookieId(new Integer(3));
 		match2.setMatchDate(date);
+		match2.setOuHandicapValue(1.5);
 		
 		matches.add(match1);
 		matches.add(match2);

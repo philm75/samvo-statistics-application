@@ -70,6 +70,11 @@ public class MatchSummary extends BaseModel {
 	private Map<Integer, MatchTime> matchMinutes = new LinkedHashMap<Integer, MatchTime>();
 	
 	/**
+	 * Handicap Value for Half goal market. 
+	 */
+	private Double handicapValue;
+	
+	/**
 	 * 
 	 */
 	public MatchSummary() {		
@@ -249,5 +254,19 @@ public class MatchSummary extends BaseModel {
 	 */
 	public void setBookieName(String bookieName) {
 		this.bookieName = bookieName;
+	}
+
+	/**
+	 * @return the handicapValue
+	 */
+	public Double getHandicapValue() {
+		return handicapValue;
+	}
+
+	/**
+	 * @param handicapValue
+	 */
+	public void setHandicapValue(Double handicapValue) {
+		this.handicapValue = handicapValue;
 	}	
 }

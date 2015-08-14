@@ -99,7 +99,8 @@ public class MatchDaoImpl implements MatchDao {
     										 "  KICK_OFF_DRAW_PRICE, " +
     										 "  KICK_OFF_OU_HF_PRICE, " +
     										 "  MATCH_DATE, " +
-    										 "  BOOKIE_ID " +
+    										 "  BOOKIE_ID, " +
+    										 "  OU_HF_HANDICAP" +
     										 ") VALUES (" +
     										 "  :matchId, " +
     										 "  :leagueName, " + 
@@ -120,7 +121,8 @@ public class MatchDaoImpl implements MatchDao {
     										 "  :kickOffDrawPrice, " +
     										 "  :kickOffOuHfPrice, " +
     										 "  :matchDate," +
-    										 "  :bookieId" +
+    										 "  :bookieId," +
+    										 "  :ouHfHandicap" +
     		                                 ");";
     
     private static final String READ_ALL_SQL = "SELECT " + 
@@ -205,7 +207,8 @@ public class MatchDaoImpl implements MatchDao {
     																  "       M.KICK_OFF_HOME_PRICE," + 
     																  "       M.KICK_OFF_AWAY_PRICE," +
     																  "       M.KICK_OFF_DRAW_PRICE," +
-    																  "       M.KICK_OFF_OU_HF_PRICE, " +
+    																  "       M.KICK_OFF_OU_HF_PRICE," +
+    																  "       M.OU_HF_HANDICAP," + 
     																  "       B.BOOKIE_ID, " +
     																  "       B.NAME, " +
     																  "       MT.MINUTE, " +
@@ -328,6 +331,8 @@ public class MatchDaoImpl implements MatchDao {
 				paramMap.put("kickOffDrawPrice" , match.getKoDrawPrice());
 				paramMap.put("matchDate"        , new java.sql.Date(match.getMatchDate().getMillis())); 
 				paramMap.put("bookieId"         , match.getBookieId());
+				paramMap.put("ouHfHandicap"     , match.getOuHandicapValue());
+				
 				jdbcTemplate.update(INSERT_SQL, paramMap);
 				
 				/**
@@ -348,30 +353,22 @@ public class MatchDaoImpl implements MatchDao {
 				paramMap.put("bookieId"  , match.getBookieId());
 				
 				if (hasPriceChanged(match.getKoHomePrice(), dbMatch.getKoHomePrice())) {
-					if (LOGGER.isInfoEnabled()) {LOGGER.info("Update Home Price for Match - " + match.toString());}
-					System.out.println("Update Home Price for Match - " + match.toString());
-					
+					if (LOGGER.isInfoEnabled()) {LOGGER.info("Update Home Price " + dbMatch.getKoHomePrice() + " for Match - " + match.toString());}
 					paramMap.put("homePrice", match.getKoHomePrice());
 					jdbcTemplate.update(UPDATE_KO_HOME_PRICE_SQL, paramMap);
 				}
 				if (hasPriceChanged(match.getKoAwayPrice(), dbMatch.getKoAwayPrice())) {
-					if (LOGGER.isInfoEnabled()) {LOGGER.info("Update Away Price for Match - " + match.toString());}
-					System.out.println("Update Away Price for Match - " + match.toString());
-					
+					if (LOGGER.isInfoEnabled()) {LOGGER.info("Update Away Price " + dbMatch.getKoAwayPrice() + " for Match - " + match.toString());}
 					paramMap.put("awayPrice", match.getKoAwayPrice());
 					jdbcTemplate.update(UPDATE_KO_AWAY_PRICE_SQL, paramMap);
 				}
 				if (hasPriceChanged(match.getKoDrawPrice(), dbMatch.getKoDrawPrice())) {
-					if (LOGGER.isInfoEnabled()) {LOGGER.info("Update Draw Price for Match - " + match.toString());}
-					System.out.println("Update Draw Price for Match - " + match.toString());
-					
+					if (LOGGER.isInfoEnabled()) {LOGGER.info("Update Draw Price " + dbMatch.getKoDrawPrice() + " for Match - " + match.toString());}
 					paramMap.put("drawPrice", match.getKoDrawPrice());
 					jdbcTemplate.update(UPDATE_KO_DRAW_PRICE_SQL, paramMap);
 				}
 				if (hasPriceChanged(match.getKoOuHfPrice(), dbMatch.getKoOuHfPrice())) {
-					if (LOGGER.isInfoEnabled()) {LOGGER.info("Update OU HT 0.5 Price for Match - " + match.toString());}
-					System.out.println("Update OU HT 0.5 Price for Match - " + match.toString());
-					
+					if (LOGGER.isInfoEnabled()) {LOGGER.info("Update OU HT 0.5 Price " + dbMatch.getKoOuHfPrice() + " for Match - " + match.toString());}
 					paramMap.put("ouHfPrice", match.getKoOuHfPrice());
 					jdbcTemplate.update(UPDATE_KO_UOHT_PRICE_SQL, paramMap);
 				}				
@@ -558,6 +555,7 @@ public class MatchDaoImpl implements MatchDao {
 					matchSummary.setKickOffDrawPrice(rs.getDouble("KICK_OFF_DRAW_PRICE"));
 					matchSummary.setKickOffHomePrice(rs.getDouble("KICK_OFF_HOME_PRICE"));
 					matchSummary.setKickOffOuHalfAGoal(rs.getDouble("KICK_OFF_OU_HF_PRICE"));
+					matchSummary.setHandicapValue(rs.getDouble("OU_HF_HANDICAP"));				
 					matchSummary.setTimeFirstGoal(rs.getInt("TIME_FIRST_GOAL"));
 					matchSummary.setBookieName(rs.getString("NAME").trim());
 					matchSummaries.put(key, matchSummary);
@@ -581,6 +579,7 @@ public class MatchDaoImpl implements MatchDao {
 					Double kickOffOuHalfAGoal = rs.getDouble("KICK_OFF_OU_HF_PRICE");
 					if (matchSummaries.get(key).getKickOffOuHalfAGoal() < kickOffOuHalfAGoal) {
 						matchSummaries.get(key).setKickOffOuHalfAGoal(kickOffOuHalfAGoal);
+						matchSummaries.get(key).setHandicapValue(rs.getDouble("OU_HF_HANDICAP"));
 					}
 				}
 				matchTime = new MatchTime();

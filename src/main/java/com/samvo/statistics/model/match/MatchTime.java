@@ -48,6 +48,11 @@ public class MatchTime extends BaseModel {
 	 * Half time under 0.5 goal price.
 	 */
 	private Double htUnderHgPrice;
+	
+	/**
+	 * Handicap Value.
+	 */
+	private Double handicapValue;
 		
 	/**
 	 * 
@@ -204,5 +209,19 @@ public class MatchTime extends BaseModel {
 	 */
 	public void setFeedTypeId(Integer feedTypeId) {
 		this.feedTypeId = feedTypeId;
+	}
+
+	/**
+	 * @return the handicapValue
+	 */
+	public Double getHandicapValue() {
+		return handicapValue;
+	}
+
+	/**
+	 * @param handicapValue the handicapValue to set
+	 */
+	public void setHandicapValue(Double handicapValue) {
+		this.handicapValue = handicapValue;
 	}	
 }
