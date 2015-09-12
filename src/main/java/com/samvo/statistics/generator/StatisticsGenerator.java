@@ -158,6 +158,12 @@ abstract class StatisticsGenerator {
 				}
 
 				if (matches.get(key) == null) {
+					Double handicapValue;					
+					if (odd.getHandicapValue() != null) {
+						handicapValue = Double.valueOf(odd.getHandicapValue());
+					} else {
+						handicapValue = 0.0;
+					}
 					matches.put(key, DomainFactory.toMatch(feedTypeId, 
 														   match, 
 														   bookies.get(bookie.getName()), 
@@ -165,7 +171,7 @@ abstract class StatisticsGenerator {
 														   homePrice, 
 														   drawPrice, 
 														   ouHfPrice, 
-														   Double.valueOf(odd.getHandicapValue())));
+														   handicapValue));
 				}					
 			}
 		}

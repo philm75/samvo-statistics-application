@@ -305,7 +305,6 @@ public class MatchDaoImpl implements MatchDao {
 		Match dbMatch = exists(match);		
 		if (dbMatch == null) {
 			if (LOGGER.isInfoEnabled()) {LOGGER.info("Creating Match key - " + match.toString());}
-			System.out.println("Creating Match key - " + match.toString());
 			try {
 				/**
 				 * Create match.

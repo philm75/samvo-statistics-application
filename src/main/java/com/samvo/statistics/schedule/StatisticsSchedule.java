@@ -54,7 +54,9 @@ public class StatisticsSchedule {
 		try {
 			irStatisticsGenerator.runProcess();			
 		} catch (Exception e) {
+			LOGGER.info("IR Process exception - " + e.toString());
 			LOGGER.info("IR Process exception - " + e.getMessage());
+			e.printStackTrace();
 		}
 		System.out.println("IR Process finished....");
 		LOGGER.info("IR Process finished....");
