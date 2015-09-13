@@ -55,7 +55,6 @@ public class StatisticsSchedule {
 			irStatisticsGenerator.runProcess();			
 		} catch (Exception e) {
 			LOGGER.info("IR Process exception - " + e.toString());
-			LOGGER.info("IR Process exception - " + e.getMessage());
 			e.printStackTrace();
 		}
 		System.out.println("IR Process finished....");
@@ -72,7 +71,8 @@ public class StatisticsSchedule {
 		try {
 			tmStatisticsGenerator.runProcess();			
 		} catch (Exception e) {
-			LOGGER.info("TM Process exception - " + e.getMessage());
+			LOGGER.info("TM Process exception - " + e.toString());
+			e.printStackTrace();
 		}
 		LOGGER.info("TM Process finished....");
 		System.out.println("TM Process finished....");

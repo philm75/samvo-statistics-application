@@ -78,6 +78,7 @@ public class ExportServiceImpl implements ExportService {
 		createCell(++columnIndex, row, "Kick off Away price");
 		createCell(++columnIndex, row, "Kick off Draw price");
 		createCell(++columnIndex, row, "O/U 0.5 price");
+		createCell(++columnIndex, row, "O/U Handicap");
 		
 		int minutes = 1;
 		while (minutes < 56) {
@@ -104,6 +105,12 @@ public class ExportServiceImpl implements ExportService {
 		createCell(++columnIndex, row, matchSummary.getKickOffAwayPrice());
 		createCell(++columnIndex, row, matchSummary.getKickOffDrawPrice());
 		createCell(++columnIndex, row, matchSummary.getKickOffOuHalfAGoal());
+		
+		if (matchSummary.getHandicapValue() == null || matchSummary.getHandicapValue().intValue() == 0.0) {
+			createCell(++columnIndex, row, StringUtils.EMPTY);
+		} else {
+			createCell(++columnIndex, row, matchSummary.getHandicapValue());			
+		}
 		
 		Iterator<MatchTime> iterator = matchSummary.getMatchMinutes().values().iterator();
 		MatchTime matchTime = null;
