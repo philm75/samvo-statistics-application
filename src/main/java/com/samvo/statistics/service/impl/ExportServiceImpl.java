@@ -2,6 +2,7 @@ package com.samvo.statistics.service.impl;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.math.BigDecimal;
 import java.util.Iterator;
 import java.util.List;
 
@@ -105,21 +106,17 @@ public class ExportServiceImpl implements ExportService {
 		createCell(++columnIndex, row, matchSummary.getKickOffAwayPrice());
 		createCell(++columnIndex, row, matchSummary.getKickOffDrawPrice());
 		createCell(++columnIndex, row, matchSummary.getKickOffOuHalfAGoal());
-		
-		if (matchSummary.getHandicapValue() == null || matchSummary.getHandicapValue().intValue() == 0.0) {
-			createCell(++columnIndex, row, StringUtils.EMPTY);
-		} else {
-			createCell(++columnIndex, row, matchSummary.getHandicapValue());			
-		}
+		createCell(++columnIndex, row, matchSummary.getHandicapValue());			
 		
 		Iterator<MatchTime> iterator = matchSummary.getMatchMinutes().values().iterator();
 		MatchTime matchTime = null;
 		while (iterator.hasNext()) {
-			matchTime = iterator.next();
-			if (matchTime.getHtUnderHgPrice().doubleValue() > 0.0) {
+			matchTime = iterator.next();			
+			BigDecimal value = new BigDecimal(matchTime.getHtUnderHgPrice().doubleValue());
+			if (value.compareTo(BigDecimal.ZERO) > 0) {
 				createCell(++columnIndex, row, matchTime.getHtUnderHgPrice().doubleValue());
 			} else {
-				createCell(++columnIndex, row, StringUtils.EMPTY);				
+				createCell(++columnIndex, row, StringUtils.EMPTY);			
 			}
 		}
 	}
