@@ -196,6 +196,7 @@ public class MatchDaoImpl implements MatchDao {
     											   		" B.NAME " +
     											   		"FROM OPSFEED.MATCH M, OPSFEED.BOOKIE B " +
     											   		"WHERE M.FEED_TYPE_ID = :feedTypeId " +
+    											   		"AND   M.MATCH_DATE >= CURRENT_DATE-3 " +
     											   		"AND   M.BOOKIE_ID = B.BOOKIE_ID ";
     
     private static final String READ_MATCH_SUMMARY_BY_FEED_TYPE_SQL = "SELECT M.MATCH_ID," +
